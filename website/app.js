@@ -1,6 +1,6 @@
 /* Global Variables */
 // API related variables
-const apiKey = 'c9267f5315ddb6b01cc3ac0e48b77f7a';
+const APIKey = 'c9267f5315ddb6b01cc3ac0e48b77f7a';
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?zip=';
 // Elements in DOM
 const generateButton = document.getElementById('generate');
@@ -17,7 +17,7 @@ let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
 
 // Obtain weather information from API
 // api.openweathermap.org/data/2.5/weather?zip={zip code},{country code}&appid={your api key}
-const weatherInfo = async zip => await fetch(`${baseUrl+zip},us&appid=${apiKey}`);
+const weatherInfo = async zip => await fetch(`${baseUrl+zip},us&appid=${APIKey}`);
 
 //POST --> to server
 const postData = async(url, weatherInfo) => {
@@ -66,9 +66,10 @@ generateButton.addEventListener('click', async() => {
     const res = await response.json();
     
     // 4. Parsing data from weatherInfo
-    const temp = res.main.temp.toString() + '°C';
-    const city = res.name.toString();
-    const dataset = { name: city, temperature: temp, date: newDate, feelings: feelings };
+    // Interesting, the temp returned is in Kelvin degree. hahaha'
+    const absolute_zero = 273.15
+    const temp = (res.main.temp - 273.15).toPrecision(3).toString() + '°C';
+    const dataset = { date: newDate, temperature: temp, feelings: feelings };
     
     // 5. Posting data to Server
     data = await postData('/newData', dataset);
